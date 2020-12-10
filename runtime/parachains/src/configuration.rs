@@ -857,4 +857,11 @@ mod tests {
 			assert!(<Configuration as Store>::PendingConfig::get().is_none())
 		});
 	}
+
+	#[test]
+	fn test() {
+		use sp_core::hexdisplay::HexDisplay;
+		let hashed_key = <Configuration as Store>::ActiveConfig::hashed_key();
+		panic!("0x{:?}", HexDisplay::from(&hashed_key));
+	}
 }

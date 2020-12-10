@@ -29,11 +29,15 @@ pub fn make_persisted_validation_data<T: paras::Config + hrmp::Config>(
 	para_id: ParaId,
 	relay_parent_number: T::BlockNumber,
 ) -> Option<PersistedValidationData<T::BlockNumber>> {
+	use parity_scale_codec::Decode;
+
 	let config = <configuration::Module<T>>::config();
 
 	Some(PersistedValidationData {
 		parent_head: <paras::Module<T>>::para_head(&para_id)?,
 		block_number: relay_parent_number,
+		relay_storage_root: Decode::decode(&mut &sp_io::storage::root()[..])
+			.expect("storage root must decode to the Hash type; qed"),
 		hrmp_mqc_heads: <hrmp::Module<T>>::hrmp_mqc_heads(para_id),
 		dmq_mqc_head: <dmp::Module<T>>::dmq_mqc_head(para_id),
 		max_pov_size: config.max_pov_size,
